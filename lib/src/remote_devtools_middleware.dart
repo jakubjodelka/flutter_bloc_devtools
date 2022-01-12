@@ -30,8 +30,8 @@ class RemoteDevToolsObserver extends BlocObserver {
   /// example.lan:8000
   ///
   final String _host;
-  SocketClusterWrapper socket;
-  String _channel;
+  SocketClusterWrapper? socket;
+  late String _channel;
   RemoteDevToolsStatus _status = RemoteDevToolsStatus.notConnected;
 
   RemoteDevToolsStatus get status => _status;
@@ -41,7 +41,7 @@ class RemoteDevToolsObserver extends BlocObserver {
 
   /// The name that will appear in Instance Name in Dev Tools. If not specified,
   /// default to 'flutter'.
-  String instanceName;
+  String? instanceName;
 
   RemoteDevToolsObserver(
     this._host, {
@@ -56,7 +56,7 @@ class RemoteDevToolsObserver extends BlocObserver {
   Future<void> connect() async {
     _status = RemoteDevToolsStatus.connecting;
     print('trying to connect to socket at $_host');
-    await socket.connect();
+    await socket?.connect();
     _status = RemoteDevToolsStatus.connected;
     print('connected to socket at $_host');
     _channel = await _login();
@@ -67,7 +67,7 @@ class RemoteDevToolsObserver extends BlocObserver {
 
   Future<String> _login() {
     final c = Completer<String>();
-    socket.emit('login', 'master', (String name, dynamic error, dynamic data) {
+    socket?.emit('login', 'master', (String name, dynamic error, dynamic data) {
       c.complete(data as String);
     });
     return c.future;
@@ -75,7 +75,7 @@ class RemoteDevToolsObserver extends BlocObserver {
 
   Future<dynamic> _waitForStart() {
     final c = Completer();
-    socket.on(_channel, (String name, dynamic data) {
+    socket?.on(_channel, (String name, dynamic data) {
       if (data['type'] == 'START') {
         _status = RemoteDevToolsStatus.started;
         c.complete();
@@ -86,41 +86,47 @@ class RemoteDevToolsObserver extends BlocObserver {
     return c.future;
   }
 
-  String _getBlocName(BlocBase bloc) {
+  String? _getBlocName(BlocBase? bloc) {
     final blocName = bloc.runtimeType.toString();
     final blocHash = bloc.hashCode;
     if (_blocs.containsKey(blocName)) {
-      if (!_blocs[blocName].containsKey(blocHash)) {
-        _blocs[blocName][blocHash] =
-            '$blocName-${_blocs[blocName].keys.length}';
+      if (_blocs[blocName]?.containsKey(blocHash) == false) {
+        _blocs[blocName]?[blocHash] =
+            '$blocName-${_blocs[blocName]?.keys.length}';
       }
     } else {
       _blocs[blocName] = {blocHash: blocName};
     }
-    return _blocs[blocName][blocHash];
+    return _blocs[blocName]?[blocHash];
   }
 
-  void _removeBlocName(BlocBase bloc) {
+  void _removeBlocName(BlocBase? bloc) {
     final blocName = bloc.runtimeType.toString();
     final blocHash = bloc.hashCode;
+
     if (_blocs.containsKey(blocName) &&
-        _blocs[blocName].containsKey(blocHash)) {
-      _blocs[blocName].remove(blocHash);
+        _blocs[blocName]?.containsKey(blocHash) == true) {
+      _blocs[blocName]?.remove(blocHash);
     }
   }
 
-  void _relay(String type,
-      [BlocBase bloc, Object state, dynamic action, String nextActionId]) {
-    final message = {'type': type, 'id': socket.id, 'name': instanceName};
+  void _relay(
+    String type, [
+    BlocBase? bloc,
+    Object? state,
+    dynamic action,
+    String? nextActionId,
+  ]) {
+    final message = {'type': type, 'id': socket?.id, 'name': instanceName};
     final blocName = _getBlocName(bloc);
 
     if (state != null) {
       /// Add or update Bloc state
       if (state is Mappable) {
-        _appState[blocName] = state.toMap();
+        _appState[blocName ?? ''] = state.toMap();
         message['payload'] = jsonEncode(_appState);
       } else {
-        _appState[blocName] = state.toString();
+        _appState[blocName ?? ''] = state.toString();
         message['payload'] = jsonEncode(_appState);
       }
     } else {
@@ -138,11 +144,11 @@ class RemoteDevToolsObserver extends BlocObserver {
     } else if (action != null) {
       message['action'] = action as String;
     }
-    socket.emit(socket.id != null ? 'log' : 'log-noid', message);
+    socket?.emit(socket?.id != null ? 'log' : 'log-noid', message);
   }
 
   @override
-  void onTransition(BlocBase bloc, Transition transition) {
+  void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
     if (status == RemoteDevToolsStatus.started) {
       _relay('ACTION', bloc, transition.nextState, transition.event);
