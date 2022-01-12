@@ -24,19 +24,4 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
   ) {
     emit(state.copyWith(counter: state.counter - 1));
   }
-
-  // Stream<CounterState> mapEventToState(
-  //   CounterEvent event,
-  // ) async* {
-  //   if (event is IncrementCounterEvent) {
-  //     yield state.copyWith(
-  //       counter: state.counter + 1,
-  //     );
-  //   }
-  //   if (event is DecrementCounterEvent) {
-  //     yield state.copyWith(
-  //       counter: state.counter - 1,
-  //     );
-  //   }
-  // }
 }

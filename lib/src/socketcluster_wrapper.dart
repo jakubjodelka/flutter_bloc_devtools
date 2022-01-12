@@ -1,7 +1,7 @@
 part of flutter_bloc_devtools;
 
 class SocketClusterWrapper {
-  late socket_cc.Socket _socket;
+  socket_cc.Socket? _socket;
   Function socketFactory;
   String url;
 
@@ -14,13 +14,13 @@ class SocketClusterWrapper {
     _socket = await socketFactory(url);
   }
 
-  socket_cc.Emitter on(String event, Function func) {
-    return _socket.on(event, func);
+  socket_cc.Emitter? on(String event, Function func) {
+    return _socket?.on(event, func);
   }
 
   void emit(String event, Object data, [socket_cc.AckCall? ack]) {
-    _socket.emit(event, data, ack);
+    _socket?.emit(event, data, ack);
   }
 
-  String? get id => _socket.id;
+  String? get id => _socket?.id;
 }
