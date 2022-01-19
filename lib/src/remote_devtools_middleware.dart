@@ -11,7 +11,7 @@ enum RemoteDevToolsStatus {
   /// Connected to remote, but not started
   connected,
 
-  /// Awating start response
+  /// Awaiting start response
   starting,
 
   /// Sending and receiving actions
@@ -37,7 +37,7 @@ class RemoteDevToolsObserver extends BlocObserver {
   RemoteDevToolsStatus get status => _status;
 
   final Map<String, Map<int, String>> _blocs = {};
-  final Map<String, dynamic> _appState = {};
+  final Map<String?, dynamic> _appState = {};
 
   /// The name that will appear in Instance Name in Dev Tools. If not specified,
   /// default to 'flutter'.

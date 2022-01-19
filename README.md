@@ -29,10 +29,7 @@ Add the library to pubspec.yaml:
 
 ```yaml
 dependencies:
-  flutter_bloc_devtools:
-    git:
-      url: https://github.com/chonghorizons/flutter_bloc_devtools.git
-      ref: main
+  flutter_bloc_devtools: ^0.1.2
 ```
 
 Note: The version on pub.dev doesn't work with null safety and v8 of bloc.
@@ -52,7 +49,7 @@ void main() async {
 
 ## Making your Events and States Mappable
 
-Events and States ~~have to~~ may implement `Mappable`:
+Events and States have to implement `Mappable`:
 
 ```dart
 class CounterState extends Equatable implements Mappable {

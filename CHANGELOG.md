@@ -3,6 +3,7 @@
 ## 0.1.2 (2021)
 
 * Update to v8.0.0 of bloc
+* Upgrade dependencies to latest versions.
 
 ## 0.1.1 (2020-11-15)
 
