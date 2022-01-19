@@ -4,10 +4,10 @@ homepage: https://github.com/andrea689/flutter_bloc_devtools/
 version: 0.2.0
 
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: '>=2.14.0 <3.0.0'
   
 dependencies:
-  bloc: ^8.0.0
+  bloc: ^8.0.2
   socketcluster_client: ^0.3.0
 
 dev_dependencies:

@@ -4,18 +4,18 @@ class CounterState extends Equatable implements Mappable {
   final int counter;
 
   const CounterState({
-    this.counter,
+    this.counter = 0,
   });
 
   CounterState copyWith({
-    int counter,
+    int? counter,
   }) =>
       CounterState(
         counter: counter ?? this.counter,
       );
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         counter,
       ];
 
